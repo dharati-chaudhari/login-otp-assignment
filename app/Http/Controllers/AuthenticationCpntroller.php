@@ -34,7 +34,7 @@ class AuthenticationCpntroller extends Controller
 
         $lastOtp = Otp::where('email', $email)->latest()->first();
         if ($lastOtp && $lastOtp->created_at->diffInSeconds(Carbon::now()) < 60) {
-            return response()->json(['message' => 'OTP already sent. Retry after 5 mins.'], 429);
+            return response()->json(['message' => 'OTP already sent. Retry after 60 Secs.'], 429);
         }
 
         $otp = rand(100000, 999999);
@@ -43,8 +43,6 @@ class AuthenticationCpntroller extends Controller
             'otp' => Hash::make($otp),
             'expires_at' => Carbon::now()->addMinutes(5)
         ]);
-
-        //Notification::route('mail', $email)->notify(new SendOtpNotification($otp));
 
         $message = $otp. 'is your OTP. Do not share this OTP with anyone.';
         $subject = "OTP Mail";
